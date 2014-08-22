@@ -6,11 +6,11 @@ This library assists in the interaction with Akamai's NetStorage CMS API.
 * /NetStorage - core NetStorage project
 * /NetStorageTest - MSTest unit tests
 * /NetStorageExample - example CMS.exe implementation
-* /NetStorageAPI.sln - root VisualStudio solution
+* /NetStorageKit.sln - root VisualStudio solution
 
 ## Install
-* Open the NetStorageAPI.sln in Visual Studio; Rebuild All
-* OR ```MSBuild.exe NetStorageAPI.sln /t:rebuild```
+* Open the NetStorageKit.sln in Visual Studio; Rebuild All
+* OR ```MSBuild.exe NetStorageKit.sln /t:rebuild```
 * Copy the Akamai.Netstorage.dll to your application or solution. (/NetStorage/obj/Debug/Akamai.Netstorage.dll or /NetStorage/obj/Release/Akamai.Netstorage.dll)
 
 ## Getting Started
