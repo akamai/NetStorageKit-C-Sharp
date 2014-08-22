@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetStorage", "NetStorage\NetStorage.csproj", "{348221B5-C2E0-4CA3-A0F7-188AF7A46117}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetStorageTest", "NetStorageTest\NetStorageTest.csproj", "{0A30CC8A-869F-4BD7-B25D-7977C5B33675}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetStorageExample", "NetStorageExample\NetStorageExample.csproj", "{CBC8F2AD-3028-4D8E-A5B4-216953D245BD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{348221B5-C2E0-4CA3-A0F7-188AF7A46117}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{348221B5-C2E0-4CA3-A0F7-188AF7A46117}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{348221B5-C2E0-4CA3-A0F7-188AF7A46117}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{348221B5-C2E0-4CA3-A0F7-188AF7A46117}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A30CC8A-869F-4BD7-B25D-7977C5B33675}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A30CC8A-869F-4BD7-B25D-7977C5B33675}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A30CC8A-869F-4BD7-B25D-7977C5B33675}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A30CC8A-869F-4BD7-B25D-7977C5B33675}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBC8F2AD-3028-4D8E-A5B4-216953D245BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBC8F2AD-3028-4D8E-A5B4-216953D245BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBC8F2AD-3028-4D8E-A5B4-216953D245BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBC8F2AD-3028-4D8E-A5B4-216953D245BD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
