@@ -1,6 +1,7 @@
 # NetStorageKit (for .NET/c#)
 
-This library assists in the interaction with Akamai's NetStorage CMS API. 
+This library assists in the interaction with Akamai's NetStorage CMS API. The CMS API Spec can be found at:
+https://control.akamai.com/dl/customers/NS/NetStrgHttpCM.pdf
 
 ## Project organization
 * /NetStorage - core NetStorage project
