@@ -131,13 +131,13 @@ namespace Akamai.Utils
         }
 
         /// <summary>
-        /// format a date and time into ISO8601 style of "yyyyMMdd'T'HH:mm:ssZ"
+        /// format a date and time into ISO8601 style of "yyyyMMdd'T'HH:mm:ss+0000"
         /// </summary>
         /// <param name="timestamp">the date and time to convert</param>
         /// <returns>the formatted date</returns>
         public static string ToISO8601(this DateTime timestamp)
         {
-            return timestamp.ToUniversalTime().ToString("yyyyMMdd'T'HH:mm:ssZ");
+            return timestamp.ToUniversalTime().ToString("yyyyMMdd'T'HH:mm:ss+0000");
         }
 
         /// <summary>
