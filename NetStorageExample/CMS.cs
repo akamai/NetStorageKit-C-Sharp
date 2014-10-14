@@ -54,9 +54,6 @@ namespace Akamai.NetStorage
                 {
                     switch (firstarg) 
                     {
-                        case "-h": 
-                            help();
-                            return;
                         case "-a":
                             action = arg;
                             break;
@@ -80,6 +77,11 @@ namespace Akamai.NetStorage
                             break;
                     }
                     firstarg = null;
+                }
+                else if (arg == "-h" || arg == "--help" || arg == "/?")
+                {
+                    help();
+                    return;
                 }
                 else if (arg == "-indexzip")
                     indexZip = true;
