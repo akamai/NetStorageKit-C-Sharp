@@ -84,6 +84,7 @@ namespace Akamai.NetStorage
 
         public Stream Dir(string path, string format = "xml")
         {
+            //TODO: strip final slash on dir command
             return execute("GET", path, new APIParams() { Action = "dir", Format = format });
         }
 
@@ -175,7 +176,7 @@ namespace Akamai.NetStorage
             DateTime mTime = srcFile.LastWriteTime;
             byte[] checksum = null;
             Stream stream;
-            using (stream = new BufferedStream(srcFile.OpenRead(), 1024^2))
+            using (stream = new BufferedStream(srcFile.OpenRead(), 1024*1024))
             {
                 checksum = stream.ComputeHash(NetstorageCMSv35Signer.HashType.SHA256.Checksum);
             }
