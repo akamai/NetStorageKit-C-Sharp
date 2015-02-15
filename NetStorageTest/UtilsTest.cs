@@ -108,7 +108,7 @@ namespace Akamai.Utils
         public void ToISO8601Test()
         {
             var timestamp = new DateTime(1918, 11, 11, 11, 00, 00, DateTimeKind.Utc);
-            Assert.AreEqual(timestamp.ToISO8601(), "19181111T11:00:00Z");
+            Assert.AreEqual(timestamp.ToISO8601(), "19181111T11:00:00+0000");
         }
 
         [TestMethod]

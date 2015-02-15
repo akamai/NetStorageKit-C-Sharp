@@ -78,7 +78,7 @@ namespace Akamai.NetStorage
 
         public bool Delete(string path)
         {
-            execute("POST", path, new APIParams() { Action ="delete" });
+            using (execute("POST", path, new APIParams() { Action = "delete" })) { }
             return true;
         }
 
@@ -100,7 +100,7 @@ namespace Akamai.NetStorage
 
         public bool MkDir(string path)
         {
-            execute("PUT", path, new APIParams() { Action = "mkdir" });
+            using (execute("PUT", path, new APIParams() { Action = "mkdir" })) { }
             return true;
         }
 
@@ -108,20 +108,20 @@ namespace Akamai.NetStorage
         {
             //TODO: verify that this is for a file - cannot mtime on symlinks or dirs
             mTime = mTime ?? DateTime.Now;
-            execute("PUT", path, new APIParams() { Action = "mtime", MTime = mTime });
+            using (execute("PUT", path, new APIParams() { Action = "mtime", MTime = mTime })) { }
             return true;
         }
 
         public bool Rename(string path, string original)
         {
             //TODO: validate path and destination start with the same cpcode
-            execute("PUT", path, new APIParams() { Action = "rename", Destination = original});
+            using (execute("PUT", path, new APIParams() { Action = "rename", Destination = original })) { }
             return true;
         }
 
         public bool RmDir(string path)
         {
-            execute("POST", path, new APIParams() { Action = "rmdir" });
+            using (execute("POST", path, new APIParams() { Action = "rmdir" })) { }
             return true;
         }
 
@@ -132,13 +132,13 @@ namespace Akamai.NetStorage
 
         public bool Symlink(string path, string target)
         {
-            execute("PUT", path, new APIParams() { Action = "symlink", Target = target });
+            using (execute("PUT", path, new APIParams() { Action = "symlink", Target = target })) { }
             return true;
         }
 
         public bool QuickDelete(string path)
         {
-            execute("PUT", path, new APIParams() { Action = "quick-delete", QuickDelete = "imreallyreallysure" });
+            using (execute("PUT", path, new APIParams() { Action = "quick-delete", QuickDelete = "imreallyreallysure" })) { }
             return true;
         }
 
