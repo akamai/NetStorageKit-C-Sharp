@@ -165,7 +165,7 @@ namespace Akamai.NetStorage
             if (acsParams.Size != null && acsParams.IndexZip == true)
                 acsParams.Size = null;
 
-            execute("PUT", path, acsParams, uploadFileStream);
+            using (execute("PUT", path, acsParams, uploadFileStream)) { }
             return true;
         }
 
