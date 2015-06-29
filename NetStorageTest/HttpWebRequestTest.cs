@@ -49,6 +49,7 @@ namespace Akamai.NetStorageTest
         public override string Method { get; set; }
         public override WebHeaderCollection Headers { get; set; }
         public override long ContentLength { get; set; }
+        public override int Timeout { get; set; }
 
         private Uri itemUri;
         public WebResponse NextResponse = null;

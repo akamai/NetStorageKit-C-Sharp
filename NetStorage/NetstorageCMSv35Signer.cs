@@ -210,6 +210,11 @@ namespace Akamai.Netstorage
             {
                 //Disable the nastiness of Expect100Continue
                 ServicePointManager.Expect100Continue = false;
+                //Another hack to avoid problems with the read timeout even though the 
+                //bytes are being sent to the client. .NET doesn't distinguish between
+                //a read timeout and a writetimeout.
+                request.Timeout = System.Threading.Timeout.Infinite;
+
 
                 if (this.UploadStream == null)
                     request.ContentLength = 0;
