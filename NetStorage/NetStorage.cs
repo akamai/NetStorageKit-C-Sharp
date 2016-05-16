@@ -173,7 +173,8 @@ namespace Akamai.NetStorage
         {
             if (!srcFile.Exists) throw new FileNotFoundException("Src file is not accessible", srcFile.ToString());
 
-            DateTime mTime = srcFile.LastWriteTime;
+            //DateTime mTime = srcFile.LastWriteTime;
+            DateTime mTime = DateTime.Now;
             byte[] checksum = null;
             Stream stream;
             using (stream = new BufferedStream(srcFile.OpenRead(), 1024*1024))
