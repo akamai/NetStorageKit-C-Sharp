@@ -190,5 +190,19 @@ namespace NetStorage.Standard
 
       return response.IsSuccessStatusCode;
     }
+
+    public async Task<bool> MTimeAsync(string path, DateTime? newTime = null)
+    {
+      Uri = await GetNetStorageUri(path);
+      Params = NetStorageAction.MTime(newTime);
+
+      var response = await Policy
+        .Handle<HttpRequestException>()
+        .OrResult<HttpResponseMessage>(r => r.IsSuccessStatusCode == false)
+        .WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(5))
+        .ExecuteAsync(() => SendAsync(new HttpRequestMessage(HttpMethod.Post, Uri), CancellationToken.None));
+
+      return response.IsSuccessStatusCode;
+    }
   }
 }

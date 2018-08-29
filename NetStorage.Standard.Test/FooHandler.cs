@@ -38,6 +38,8 @@ namespace NetStorage.Standard.Test
           return await GetListContent();
         case "mkdir":
           return "";
+        case "mtime":
+          return "";
         default:
           return null;
       }

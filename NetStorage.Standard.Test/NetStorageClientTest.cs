@@ -88,5 +88,16 @@ namespace NetStorage.Standard.Test
         Assert.True(response);
       }
     }
+
+    [Fact]
+    public async Task ModifyTime()
+    {
+      using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
+        new FooHandler()))
+      {
+        var response = await client.MTimeAsync("/mtime");
+        Assert.True(response);
+      }
+    }
   }
 }
