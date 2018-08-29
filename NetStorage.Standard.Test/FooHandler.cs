@@ -1,4 +1,6 @@
-﻿using System;
+﻿// ReSharper disable InconsistentNaming
+
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -30,6 +32,8 @@ namespace NetStorage.Standard.Test
           return "";
         case "download":
           return "";
+        case "du":
+          return await GetDUContent();
         default:
           return null;
       }
@@ -47,6 +51,16 @@ namespace NetStorage.Standard.Test
             <file type=""dir"" name=""explicitdir2"" bytes=""3"" files=""2"" mtime=""1524068462""/>
             <file type=""file"" name=""file1"" size=""532459"" md5=""[HASH]"" mtime=""1524068382""/>
         </stat>";
+
+      return await Task.FromResult(content);
+    }
+
+    private static async Task<string> GetDUContent()
+    {
+      const string content = @"
+        <du directory=""/[CP Code]/dir1/dir2""> 
+            <du-info files=""12399999"" bytes=""383838383838""> 
+        </du>";
 
       return await Task.FromResult(content);
     }

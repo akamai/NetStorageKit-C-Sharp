@@ -55,5 +55,16 @@ namespace NetStorage.Standard.Test
         Assert.NotNull(response);
       }
     }
+
+    [Fact]
+    public async Task GetDirectoryUsage()
+    {
+      using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
+        new FooHandler()))
+      {
+        var response = await client.DUAsync("/du");
+        Assert.NotNull(response);
+      }
+    }
   }
 }
