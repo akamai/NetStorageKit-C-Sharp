@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using NetStorage.Standard.Models;
+using Polly;
 
 namespace NetStorage.Standard
 {
@@ -87,8 +88,13 @@ namespace NetStorage.Standard
     {
       Uri = await GetNetStorageUri(path);
       Params = NetStorageAction.Delete;
-      var request = new HttpRequestMessage(HttpMethod.Put, Uri);
-      var response = await SendAsync(request, CancellationToken.None);
+
+      var response = await Policy
+        .Handle<HttpRequestException>()
+        .OrResult<HttpResponseMessage>(r => r.IsSuccessStatusCode == false)
+        .WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(5))
+        .ExecuteAsync(() => SendAsync(new HttpRequestMessage(HttpMethod.Put, Uri), CancellationToken.None));
+
       return response.IsSuccessStatusCode;
     }
 
@@ -96,8 +102,13 @@ namespace NetStorage.Standard
     {
       Uri = await GetNetStorageUri(path);
       Params = NetStorageAction.Dir();
-      var request = new HttpRequestMessage(HttpMethod.Get, Uri);
-      var response = await SendAsync(request, CancellationToken.None);
+
+      var response = await Policy
+        .Handle<HttpRequestException>()
+        .OrResult<HttpResponseMessage>(r => r.IsSuccessStatusCode == false)
+        .WaitAndRetryAsync(5, _ => TimeSpan.FromSeconds(2))
+        .ExecuteAsync(() => SendAsync(new HttpRequestMessage(HttpMethod.Get, Uri), CancellationToken.None));
+
       if (response.IsSuccessStatusCode)
       {
         var data = await response.Content.ReadAsStringAsync();
