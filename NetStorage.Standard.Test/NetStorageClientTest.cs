@@ -110,5 +110,16 @@ namespace NetStorage.Standard.Test
         Assert.True(response);
       }
     }
+
+    [Fact]
+    public async Task RenameFile()
+    {
+      using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
+        new FooHandler()))
+      {
+        var response = await client.RenameAsync("/rename", "");
+        Assert.True(response);
+      }
+    }
   }
 }

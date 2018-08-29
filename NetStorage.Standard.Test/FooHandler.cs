@@ -42,6 +42,8 @@ namespace NetStorage.Standard.Test
           return "";
         case "quick-delete":
           return "";
+        case "rename":
+          return "";
         default:
           return null;
       }

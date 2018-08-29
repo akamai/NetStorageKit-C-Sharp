@@ -17,7 +17,7 @@ namespace NetStorage.Standard.Models
       new APIParams {Action = "mtime", MTime = mTime ?? DateTime.Now};
 
     public static APIParams QuickDelete = new APIParams {Action = "quick-delete", QuickDelete = "imreallyreallysure"};
-    public static APIParams Rename(string original) => new APIParams {Action = "rename", Destination = original};
+    public static APIParams Rename(string destination) => new APIParams {Action = "rename", Destination = destination};
     public static APIParams RmDir = new APIParams {Action = "rmdir"};
     public static APIParams Stat(string format = "xml") => new APIParams {Action = "stat", Format = format};
     public static APIParams SymLink(string target) => new APIParams {Action = "symlink", Target = target};
