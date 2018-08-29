@@ -57,21 +57,6 @@ namespace NetStorage.Standard
       return await Task.FromResult(signData.ComputeKeyedHash(Credentials.Key, SignVersion.Algorithm).ToBase64());
     }
 
-    public async Task<XDocument> DirAsync(string path)
-    {
-      Uri = await GetNetStorageUri(path);
-      Params = NetStorageAction.Dir();
-      var request = new HttpRequestMessage(HttpMethod.Get, Uri);
-      var response = await SendAsync(request, CancellationToken.None);
-      if (response.IsSuccessStatusCode)
-      {
-        var data = await response.Content.ReadAsStringAsync();
-        return XDocument.Parse(data);
-      }
-
-      return null;
-    }
-
     public override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
       CancellationToken cancellationToken)
     {
@@ -96,6 +81,30 @@ namespace NetStorage.Standard
         {AuthDataHeader, authData},
         {AuthSignHeader, authSign}
       });
+    }
+
+    public new async Task<bool> DeleteAsync(string path)
+    {
+      Uri = await GetNetStorageUri(path);
+      Params = NetStorageAction.Delete;
+      var request = new HttpRequestMessage(HttpMethod.Put, Uri);
+      var response = await SendAsync(request, CancellationToken.None);
+      return response.IsSuccessStatusCode;
+    }
+
+    public async Task<XDocument> DirAsync(string path)
+    {
+      Uri = await GetNetStorageUri(path);
+      Params = NetStorageAction.Dir();
+      var request = new HttpRequestMessage(HttpMethod.Get, Uri);
+      var response = await SendAsync(request, CancellationToken.None);
+      if (response.IsSuccessStatusCode)
+      {
+        var data = await response.Content.ReadAsStringAsync();
+        return XDocument.Parse(data);
+      }
+
+      return null;
     }
   }
 }

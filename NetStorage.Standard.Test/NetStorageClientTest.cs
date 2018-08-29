@@ -32,5 +32,16 @@ namespace NetStorage.Standard.Test
         Assert.NotNull(response);
       }
     }
+
+    [Fact]
+    public async Task DeleteFile()
+    {
+      using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
+        new FooHandler()))
+      {
+        var response = await client.DeleteAsync("/delete");
+        Assert.True(response);
+      }
+    }
   }
 }
