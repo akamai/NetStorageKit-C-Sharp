@@ -204,5 +204,19 @@ namespace NetStorage.Standard
 
       return response.IsSuccessStatusCode;
     }
+
+    public async Task<bool> QuickDeleteAsync(string path)
+    {
+      Uri = await GetNetStorageUri(path);
+      Params = NetStorageAction.QuickDelete;
+
+      var response = await Policy
+        .Handle<HttpRequestException>()
+        .OrResult<HttpResponseMessage>(r => r.IsSuccessStatusCode == false)
+        .WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(5))
+        .ExecuteAsync(() => SendAsync(new HttpRequestMessage(HttpMethod.Post, Uri), CancellationToken.None));
+
+      return response.IsSuccessStatusCode;
+    }
   }
 }

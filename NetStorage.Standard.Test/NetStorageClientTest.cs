@@ -99,5 +99,16 @@ namespace NetStorage.Standard.Test
         Assert.True(response);
       }
     }
+
+    [Fact]
+    public async Task QuickDelete()
+    {
+      using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
+        new FooHandler()))
+      {
+        var response = await client.QuickDeleteAsync("/quick-delete");
+        Assert.True(response);
+      }
+    }
   }
 }

@@ -40,6 +40,8 @@ namespace NetStorage.Standard.Test
           return "";
         case "mtime":
           return "";
+        case "quick-delete":
+          return "";
         default:
           return null;
       }
