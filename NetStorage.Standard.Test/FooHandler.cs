@@ -46,6 +46,8 @@ namespace NetStorage.Standard.Test
           return "";
         case "rmdir":
           return "";
+        case "stat":
+          return await GetStatContent();
         default:
           return null;
       }
@@ -94,6 +96,15 @@ namespace NetStorage.Standard.Test
             <file type=""symlink"" name=""[CP Code]/explicitdir2/link1""/>
         </list>";
 
+      return await Task.FromResult(content);
+    }
+
+    private static async Task<string> GetStatContent()
+    {
+      const string content = @"
+        <stat directory=""/dir1/dir2""> 
+            <file type=""file"" name=""file.html"" mtime=""1260000000"" size=""1234567"" md5=""0123456789abcdef0123456789abcdef"" /> 
+        </stat>";
       return await Task.FromResult(content);
     }
   }

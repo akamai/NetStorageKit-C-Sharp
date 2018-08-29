@@ -246,5 +246,24 @@ namespace NetStorage.Standard
 
       return response.IsSuccessStatusCode;
     }
+
+    public async Task<string> StatAsync(string path)
+    {
+      Uri = await GetNetStorageUri(path);
+      Params = NetStorageAction.Stat();
+
+      var response = await Policy
+        .Handle<HttpRequestException>()
+        .OrResult<HttpResponseMessage>(r => r.IsSuccessStatusCode == false)
+        .WaitAndRetryAsync(5, _ => TimeSpan.FromSeconds(2))
+        .ExecuteAsync(() => SendAsync(new HttpRequestMessage(HttpMethod.Get, Uri), CancellationToken.None));
+
+      if (response.IsSuccessStatusCode)
+      {
+        return await response.Content.ReadAsStringAsync();
+      }
+
+      return null;
+    }
   }
 }
