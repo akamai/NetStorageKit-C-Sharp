@@ -1,4 +1,4 @@
-﻿// ReSharper disable InconsistentNaming
+// ReSharper disable InconsistentNaming
 
 using System;
 using System.Collections.Generic;
@@ -144,6 +144,25 @@ namespace NetStorage.Standard
     {
       Uri = await GetNetStorageUri(path);
       Params = NetStorageAction.DU();
+
+      var response = await Policy
+        .Handle<HttpRequestException>()
+        .OrResult<HttpResponseMessage>(r => r.IsSuccessStatusCode == false)
+        .WaitAndRetryAsync(5, _ => TimeSpan.FromSeconds(2))
+        .ExecuteAsync(() => SendAsync(new HttpRequestMessage(HttpMethod.Get, Uri), CancellationToken.None));
+
+      if (response.IsSuccessStatusCode)
+      {
+        return await response.Content.ReadAsStringAsync();
+      }
+
+      return null;
+    }
+
+    public async Task<string> ListAsync(string path)
+    {
+      Uri = await GetNetStorageUri(path);
+      Params = NetStorageAction.List();
 
       var response = await Policy
         .Handle<HttpRequestException>()

@@ -34,6 +34,8 @@ namespace NetStorage.Standard.Test
           return "";
         case "du":
           return await GetDUContent();
+        case "list":
+          return await GetListContent();
         default:
           return null;
       }
@@ -61,6 +63,26 @@ namespace NetStorage.Standard.Test
         <du directory=""/[CP Code]/dir1/dir2""> 
             <du-info files=""12399999"" bytes=""383838383838""> 
         </du>";
+
+      return await Task.FromResult(content);
+    }
+
+    private static async Task<string> GetListContent()
+    {
+      const string content = @"
+        <list>
+            <file type=""file"" name=""[CP Code]/File1.ext"" size=""3"" md5=""[HASH]"" mtime=""1524068379""/>
+            <file type=""file"" name=""[CP Code]/File2.ext"" size=""3"" md5=""[HASH]"" mtime=""1524068382""/>
+            <file type=""file"" name=""[CP Code]/implicit1/File3.ext"" size=""3"" md5=""[HASH]"" mtime=""1524068395""/>
+            <file type=""file"" name=""[CP Code]/implicit1/File4.ext"" size=""3"" md5=""[HASH]"" mtime=""1524068407""/>
+            <file type=""file"" name=""[CP Code]/implicit1/implicit2/File5.ext"" size=""3"" md5=""[HASH]"" mtime=""1524068405""/>
+            <file type=""file"" name=""[CP Code]/implicit1/implicit2/File6.ext"" size=""3"" md5=""[HASH]"" mtime=""1524068410""/>
+            <file type=""dir"" name=""[CP Code]/explicitdir1/""/>
+            <file type=""dir"" name=""[CP Code]/explicitdir2/""/>
+            <file type=""file"" name=""[CP Code]/explicitdir2/File10.ext"" size=""3"" md5=""[HASH]"" mtime=""1524068475""/>
+            <file type=""file"" name=""[CP Code]/explicitdir2/implicit/File9.ext"" size=""3"" md5=""[HASH]"" mtime=""1524068475""/>
+            <file type=""symlink"" name=""[CP Code]/explicitdir2/link1""/>
+        </list>";
 
       return await Task.FromResult(content);
     }
