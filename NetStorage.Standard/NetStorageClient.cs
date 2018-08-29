@@ -1,4 +1,4 @@
-// ReSharper disable InconsistentNaming
+﻿// ReSharper disable InconsistentNaming
 
 using System;
 using System.Collections.Generic;
@@ -101,7 +101,7 @@ namespace NetStorage.Standard
       return response.IsSuccessStatusCode;
     }
 
-    public async Task<XDocument> DirAsync(string path)
+    public async Task<string> DirAsync(string path)
     {
       Uri = await GetNetStorageUri(path);
       Params = NetStorageAction.Dir();
@@ -114,8 +114,7 @@ namespace NetStorage.Standard
 
       if (response.IsSuccessStatusCode)
       {
-        var data = await response.Content.ReadAsStringAsync();
-        return XDocument.Parse(data);
+        return await response.Content.ReadAsStringAsync();
       }
 
       return null;
