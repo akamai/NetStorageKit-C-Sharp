@@ -28,6 +28,8 @@ namespace NetStorage.Standard.Test
           return await GetDirContent();
         case "delete":
           return "";
+        case "download":
+          return "";
         default:
           return null;
       }

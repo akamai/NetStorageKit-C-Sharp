@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 using NetStorage.Standard.Models;
 using Xunit;
 
@@ -41,6 +42,17 @@ namespace NetStorage.Standard.Test
       {
         var response = await client.DeleteAsync("/delete");
         Assert.True(response);
+      }
+    }
+
+    [Fact]
+    public async Task DownloadFile()
+    {
+      using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
+        new FooHandler()))
+      {
+        var response = await client.DownloadAsync("/download");
+        Assert.NotNull(response);
       }
     }
   }

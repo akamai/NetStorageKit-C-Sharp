@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -113,6 +114,25 @@ namespace NetStorage.Standard
       {
         var data = await response.Content.ReadAsStringAsync();
         return XDocument.Parse(data);
+      }
+
+      return null;
+    }
+
+    public async Task<Stream> DownloadAsync(string path)
+    {
+      Uri = await GetNetStorageUri(path);
+      Params = NetStorageAction.Download;
+
+      var response = await Policy
+        .Handle<HttpRequestException>()
+        .OrResult<HttpResponseMessage>(r => r.IsSuccessStatusCode == false)
+        .WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(5))
+        .ExecuteAsync(() => SendAsync(new HttpRequestMessage(HttpMethod.Get, Uri), CancellationToken.None));
+
+      if (response.IsSuccessStatusCode)
+      {
+        return await response.Content.ReadAsStreamAsync();
       }
 
       return null;
