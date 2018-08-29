@@ -6,7 +6,6 @@ using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using NetStorage.Standard.Models;
 using Polly;
 
@@ -87,200 +86,90 @@ namespace NetStorage.Standard
       });
     }
 
-    public new async Task<bool> DeleteAsync(string path)
+    public async Task<HttpResponseMessage> ExecuteWithPollyAsync(string path, HttpMethod method)
     {
       Uri = await GetNetStorageUri(path);
+
+      return await Policy
+        .Handle<HttpRequestException>()
+        .OrResult<HttpResponseMessage>(r => r.IsSuccessStatusCode == false)
+        .WaitAndRetryAsync(5, _ => TimeSpan.FromSeconds(2))
+        .ExecuteAsync(() => SendAsync(new HttpRequestMessage(method, Uri), CancellationToken.None));
+    }
+
+    public new async Task<HttpResponseMessage> DeleteAsync(string path)
+    {
       Params = NetStorageAction.Delete;
-
-      var response = await Policy
-        .Handle<HttpRequestException>()
-        .OrResult<HttpResponseMessage>(r => r.IsSuccessStatusCode == false)
-        .WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(5))
-        .ExecuteAsync(() => SendAsync(new HttpRequestMessage(HttpMethod.Put, Uri), CancellationToken.None));
-
-      return response.IsSuccessStatusCode;
+      return await ExecuteWithPollyAsync(path, HttpMethod.Put);
     }
 
-    public async Task<string> DirAsync(string path)
+    public async Task<HttpResponseMessage> DirAsync(string path)
     {
-      Uri = await GetNetStorageUri(path);
       Params = NetStorageAction.Dir();
-
-      var response = await Policy
-        .Handle<HttpRequestException>()
-        .OrResult<HttpResponseMessage>(r => r.IsSuccessStatusCode == false)
-        .WaitAndRetryAsync(5, _ => TimeSpan.FromSeconds(2))
-        .ExecuteAsync(() => SendAsync(new HttpRequestMessage(HttpMethod.Get, Uri), CancellationToken.None));
-
-      if (response.IsSuccessStatusCode)
-      {
-        return await response.Content.ReadAsStringAsync();
-      }
-
-      return null;
+      return await ExecuteWithPollyAsync(path, HttpMethod.Get);
     }
 
-    public async Task<Stream> DownloadAsync(string path)
+    public async Task<HttpResponseMessage> DownloadAsync(string path)
     {
-      Uri = await GetNetStorageUri(path);
       Params = NetStorageAction.Download;
-
-      var response = await Policy
-        .Handle<HttpRequestException>()
-        .OrResult<HttpResponseMessage>(r => r.IsSuccessStatusCode == false)
-        .WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(5))
-        .ExecuteAsync(() => SendAsync(new HttpRequestMessage(HttpMethod.Get, Uri), CancellationToken.None));
-
-      if (response.IsSuccessStatusCode)
-      {
-        return await response.Content.ReadAsStreamAsync();
-      }
-
-      return null;
+      return await ExecuteWithPollyAsync(path, HttpMethod.Get);
     }
 
-    public async Task<string> DUAsync(string path)
+    public async Task<HttpResponseMessage> DUAsync(string path)
     {
-      Uri = await GetNetStorageUri(path);
       Params = NetStorageAction.DU();
-
-      var response = await Policy
-        .Handle<HttpRequestException>()
-        .OrResult<HttpResponseMessage>(r => r.IsSuccessStatusCode == false)
-        .WaitAndRetryAsync(5, _ => TimeSpan.FromSeconds(2))
-        .ExecuteAsync(() => SendAsync(new HttpRequestMessage(HttpMethod.Get, Uri), CancellationToken.None));
-
-      if (response.IsSuccessStatusCode)
-      {
-        return await response.Content.ReadAsStringAsync();
-      }
-
-      return null;
+      return await ExecuteWithPollyAsync(path, HttpMethod.Get);
     }
 
-    public async Task<string> ListAsync(string path)
+    public async Task<HttpResponseMessage> ListAsync(string path)
     {
-      Uri = await GetNetStorageUri(path);
       Params = NetStorageAction.List();
-
-      var response = await Policy
-        .Handle<HttpRequestException>()
-        .OrResult<HttpResponseMessage>(r => r.IsSuccessStatusCode == false)
-        .WaitAndRetryAsync(5, _ => TimeSpan.FromSeconds(2))
-        .ExecuteAsync(() => SendAsync(new HttpRequestMessage(HttpMethod.Get, Uri), CancellationToken.None));
-
-      if (response.IsSuccessStatusCode)
-      {
-        return await response.Content.ReadAsStringAsync();
-      }
-
-      return null;
+      return await ExecuteWithPollyAsync(path, HttpMethod.Get);
     }
 
-    public async Task<bool> MkDirAsync(string path)
+    public async Task<HttpResponseMessage> MkDirAsync(string path)
     {
-      Uri = await GetNetStorageUri(path);
       Params = NetStorageAction.MkDir;
-
-      var response = await Policy
-        .Handle<HttpRequestException>()
-        .OrResult<HttpResponseMessage>(r => r.IsSuccessStatusCode == false)
-        .WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(5))
-        .ExecuteAsync(() => SendAsync(new HttpRequestMessage(HttpMethod.Put, Uri), CancellationToken.None));
-
-      return response.IsSuccessStatusCode;
+      return await ExecuteWithPollyAsync(path, HttpMethod.Put);
     }
 
-    public async Task<bool> MTimeAsync(string path, DateTime? newTime = null)
+    public async Task<HttpResponseMessage> MTimeAsync(string path, DateTime? newTime = null)
     {
-      Uri = await GetNetStorageUri(path);
       Params = NetStorageAction.MTime(newTime);
-
-      var response = await Policy
-        .Handle<HttpRequestException>()
-        .OrResult<HttpResponseMessage>(r => r.IsSuccessStatusCode == false)
-        .WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(5))
-        .ExecuteAsync(() => SendAsync(new HttpRequestMessage(HttpMethod.Post, Uri), CancellationToken.None));
-
-      return response.IsSuccessStatusCode;
+      return await ExecuteWithPollyAsync(path, HttpMethod.Post);
     }
 
-    public async Task<bool> QuickDeleteAsync(string path)
+    public async Task<HttpResponseMessage> QuickDeleteAsync(string path)
     {
-      Uri = await GetNetStorageUri(path);
       Params = NetStorageAction.QuickDelete;
-
-      var response = await Policy
-        .Handle<HttpRequestException>()
-        .OrResult<HttpResponseMessage>(r => r.IsSuccessStatusCode == false)
-        .WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(5))
-        .ExecuteAsync(() => SendAsync(new HttpRequestMessage(HttpMethod.Post, Uri), CancellationToken.None));
-
-      return response.IsSuccessStatusCode;
+      return await ExecuteWithPollyAsync(path, HttpMethod.Post);
     }
 
-    public async Task<bool> RenameAsync(string path, string destination)
+    public async Task<HttpResponseMessage> RenameAsync(string path, string destination)
     {
-      Uri = await GetNetStorageUri(path);
       Params = NetStorageAction.Rename(destination);
-
-      var response = await Policy
-        .Handle<HttpRequestException>()
-        .OrResult<HttpResponseMessage>(r => r.IsSuccessStatusCode == false)
-        .WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(5))
-        .ExecuteAsync(() => SendAsync(new HttpRequestMessage(HttpMethod.Post, Uri), CancellationToken.None));
-
-      return response.IsSuccessStatusCode;
+      return await ExecuteWithPollyAsync(path, HttpMethod.Post);
     }
 
-    public async Task<bool> RmDirAsync(string path)
+    public async Task<HttpResponseMessage> RmDirAsync(string path)
     {
-      Uri = await GetNetStorageUri(path);
       Params = NetStorageAction.RmDir;
-
-      var response = await Policy
-        .Handle<HttpRequestException>()
-        .OrResult<HttpResponseMessage>(r => r.IsSuccessStatusCode == false)
-        .WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(5))
-        .ExecuteAsync(() => SendAsync(new HttpRequestMessage(HttpMethod.Post, Uri), CancellationToken.None));
-
-      return response.IsSuccessStatusCode;
+      return await ExecuteWithPollyAsync(path, HttpMethod.Post);
     }
 
-    public async Task<string> StatAsync(string path)
+    public async Task<HttpResponseMessage> StatAsync(string path)
     {
-      Uri = await GetNetStorageUri(path);
       Params = NetStorageAction.Stat();
-
-      var response = await Policy
-        .Handle<HttpRequestException>()
-        .OrResult<HttpResponseMessage>(r => r.IsSuccessStatusCode == false)
-        .WaitAndRetryAsync(5, _ => TimeSpan.FromSeconds(2))
-        .ExecuteAsync(() => SendAsync(new HttpRequestMessage(HttpMethod.Get, Uri), CancellationToken.None));
-
-      if (response.IsSuccessStatusCode)
-      {
-        return await response.Content.ReadAsStringAsync();
-      }
-
-      return null;
+      return await ExecuteWithPollyAsync(path, HttpMethod.Get);
     }
 
-    public async Task<bool> SymLinkAsync(string path, string target)
+    public async Task<HttpResponseMessage> SymLinkAsync(string path, string target)
     {
-      Uri = await GetNetStorageUri(path);
       Params = NetStorageAction.SymLink(target);
-
-      var response = await Policy
-        .Handle<HttpRequestException>()
-        .OrResult<HttpResponseMessage>(r => r.IsSuccessStatusCode == false)
-        .WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(5))
-        .ExecuteAsync(() => SendAsync(new HttpRequestMessage(HttpMethod.Post, Uri), CancellationToken.None));
-
-      return response.IsSuccessStatusCode;
+      return await ExecuteWithPollyAsync(path, HttpMethod.Post);
     }
 
-    public async Task<bool> UploadAsync(string path, FileInfo srcFile, bool? indexZip = null)
+    public async Task<HttpResponseMessage> UploadAsync(string path, FileInfo srcFile, bool? indexZip = null)
     {
       if (!srcFile.Exists) throw new FileNotFoundException("Src file is not accessible", srcFile.ToString());
 
@@ -297,7 +186,8 @@ namespace NetStorage.Standard
       return await UploadAsync(path, stream, mTime, size, sha256Checksum: checksum, indexZip: indexZip);
     }
 
-    public async Task<bool> UploadAsync(string path, Stream uploadFileStream, DateTime? mTime = null, long? size = null,
+    public async Task<HttpResponseMessage> UploadAsync(string path, Stream uploadFileStream, DateTime? mTime = null,
+      long? size = null,
       byte[] md5Checksum = null, byte[] sha1Checksum = null, byte[] sha256Checksum = null, bool? indexZip = null)
     {
       Uri = await GetNetStorageUri(path);
@@ -313,15 +203,13 @@ namespace NetStorage.Standard
       if (Params.Size != null && Params.IndexZip == true)
         Params.Size = null;
 
-      var response = await Policy
+      return await Policy
         .Handle<HttpRequestException>()
         .OrResult<HttpResponseMessage>(r => r.IsSuccessStatusCode == false)
         .WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(5))
         .ExecuteAsync(() =>
           SendAsync(new HttpRequestMessage(HttpMethod.Put, Uri) {Content = new StreamContent(uploadFileStream)},
             CancellationToken.None));
-
-      return response.IsSuccessStatusCode;
     }
   }
 }

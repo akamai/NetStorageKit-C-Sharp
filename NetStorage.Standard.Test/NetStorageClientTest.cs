@@ -42,7 +42,7 @@ namespace NetStorage.Standard.Test
         new FooHandler()))
       {
         var response = await client.DeleteAsync("/delete");
-        Assert.True(response);
+        Assert.NotNull(response);
       }
     }
 
@@ -86,7 +86,7 @@ namespace NetStorage.Standard.Test
         new FooHandler()))
       {
         var response = await client.MkDirAsync("/mkdir");
-        Assert.True(response);
+        Assert.NotNull(response);
       }
     }
 
@@ -97,7 +97,7 @@ namespace NetStorage.Standard.Test
         new FooHandler()))
       {
         var response = await client.MTimeAsync("/mtime");
-        Assert.True(response);
+        Assert.NotNull(response);
       }
     }
 
@@ -108,7 +108,7 @@ namespace NetStorage.Standard.Test
         new FooHandler()))
       {
         var response = await client.QuickDeleteAsync("/quick-delete");
-        Assert.True(response);
+        Assert.NotNull(response);
       }
     }
 
@@ -119,7 +119,7 @@ namespace NetStorage.Standard.Test
         new FooHandler()))
       {
         var response = await client.RenameAsync("/rename", "");
-        Assert.True(response);
+        Assert.NotNull(response);
       }
     }
 
@@ -130,7 +130,7 @@ namespace NetStorage.Standard.Test
         new FooHandler()))
       {
         var response = await client.RmDirAsync("/rmdir");
-        Assert.True(response);
+        Assert.NotNull(response);
       }
     }
 
@@ -152,7 +152,7 @@ namespace NetStorage.Standard.Test
         new FooHandler()))
       {
         var response = await client.SymLinkAsync("/symlink", "target");
-        Assert.True(response);
+        Assert.NotNull(response);
       }
     }
 
@@ -170,7 +170,7 @@ namespace NetStorage.Standard.Test
         new FooHandler()))
       {
         var response = await client.UploadAsync("/upload", new FileInfo(tmpFile));
-        Assert.True(response);
+        Assert.NotNull(response);
       }
     }
   }
