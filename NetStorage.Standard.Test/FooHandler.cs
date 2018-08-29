@@ -44,6 +44,8 @@ namespace NetStorage.Standard.Test
           return "";
         case "rename":
           return "";
+        case "rmdir":
+          return "";
         default:
           return null;
       }

@@ -121,5 +121,16 @@ namespace NetStorage.Standard.Test
         Assert.True(response);
       }
     }
+
+    [Fact]
+    public async Task RemoveDirectory()
+    {
+      using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
+        new FooHandler()))
+      {
+        var response = await client.RmDirAsync("/rmdir");
+        Assert.True(response);
+      }
+    }
   }
 }
