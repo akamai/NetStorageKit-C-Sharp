@@ -176,5 +176,19 @@ namespace NetStorage.Standard
 
       return null;
     }
+
+    public async Task<bool> MkDirAsync(string path)
+    {
+      Uri = await GetNetStorageUri(path);
+      Params = NetStorageAction.MkDir;
+
+      var response = await Policy
+        .Handle<HttpRequestException>()
+        .OrResult<HttpResponseMessage>(r => r.IsSuccessStatusCode == false)
+        .WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(5))
+        .ExecuteAsync(() => SendAsync(new HttpRequestMessage(HttpMethod.Put, Uri), CancellationToken.None));
+
+      return response.IsSuccessStatusCode;
+    }
   }
 }

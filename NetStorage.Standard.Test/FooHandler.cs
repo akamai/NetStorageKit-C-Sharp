@@ -36,6 +36,8 @@ namespace NetStorage.Standard.Test
           return await GetDUContent();
         case "list":
           return await GetListContent();
+        case "mkdir":
+          return "";
         default:
           return null;
       }
