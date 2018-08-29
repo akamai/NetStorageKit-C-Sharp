@@ -279,5 +279,49 @@ namespace NetStorage.Standard
 
       return response.IsSuccessStatusCode;
     }
+
+    public async Task<bool> UploadAsync(string path, FileInfo srcFile, bool? indexZip = null)
+    {
+      if (!srcFile.Exists) throw new FileNotFoundException("Src file is not accessible", srcFile.ToString());
+
+      var mTime = srcFile.LastWriteTime;
+      byte[] checksum;
+      Stream stream;
+      using (stream = new BufferedStream(srcFile.OpenRead(), 1024 * 1024))
+      {
+        checksum = stream.ComputeHash(HashType.SHA256.Checksum);
+      }
+
+      stream = srcFile.OpenRead();
+      var size = srcFile.Length;
+      return await UploadAsync(path, stream, mTime, size, sha256Checksum: checksum, indexZip: indexZip);
+    }
+
+    public async Task<bool> UploadAsync(string path, Stream uploadFileStream, DateTime? mTime = null, long? size = null,
+      byte[] md5Checksum = null, byte[] sha1Checksum = null, byte[] sha256Checksum = null, bool? indexZip = null)
+    {
+      Uri = await GetNetStorageUri(path);
+      Params = NetStorageAction.Upload(mTime, size, md5Checksum, sha1Checksum, sha256Checksum, indexZip);
+
+      // sanity check to ensure that indexZip is only true if the file destination is also a zip.
+      // probably should throw an exception or warning instead.
+      if (Params.IndexZip == true && !path.EndsWith(".zip"))
+        Params.IndexZip = null;
+
+      // size is not supported with zip since the index-zip funtionality mutates the file thus inconsistency on which size value to use
+      // probably should throw an exception or a warning
+      if (Params.Size != null && Params.IndexZip == true)
+        Params.Size = null;
+
+      var response = await Policy
+        .Handle<HttpRequestException>()
+        .OrResult<HttpResponseMessage>(r => r.IsSuccessStatusCode == false)
+        .WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(5))
+        .ExecuteAsync(() =>
+          SendAsync(new HttpRequestMessage(HttpMethod.Put, Uri) {Content = new StreamContent(uploadFileStream)},
+            CancellationToken.None));
+
+      return response.IsSuccessStatusCode;
+    }
   }
 }

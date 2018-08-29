@@ -21,6 +21,18 @@ namespace NetStorage.Standard.Models
     public static APIParams RmDir = new APIParams {Action = "rmdir"};
     public static APIParams Stat(string format = "xml") => new APIParams {Action = "stat", Format = format};
     public static APIParams SymLink(string target) => new APIParams {Action = "symlink", Target = target};
-    public static APIParams Upload = new APIParams {Action = "upload"};
+
+    public static APIParams Upload(DateTime? mTime = null, long? size = null, byte[] md5Checksum = null,
+      byte[] sha1Checksum = null, byte[] sha256Checksum = null, bool? indexZip = null) =>
+      new APIParams
+      {
+        Action = "upload",
+        MTime = mTime,
+        Size = size,
+        MD5 = md5Checksum,
+        SHA1 = sha1Checksum,
+        SHA256 = sha256Checksum,
+        IndexZip = indexZip == true ? indexZip : null
+      };
   }
 }

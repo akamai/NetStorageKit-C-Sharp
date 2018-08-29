@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -134,6 +135,21 @@ namespace NetStorage.Standard
     public static string ToBase64(this byte[] data)
     {
       return Convert.ToBase64String(data);
+    }
+
+    /// <summary>
+    /// Computes the hash of a given InputStream. This is a wrapper over the HashAlgorithm crypto functions.
+    /// </summary>
+    /// <param name="stream">the source stream. Use a MemoryStream if uncertain.</param>
+    /// <param name="hashType">the Algorithm to use to compute the hash</param>
+    /// <returns>a byte[] representation of the hash. If the Stream is a null object 
+    /// then null will be returned. If the Stream is empty an empty byte[] {} will be returned.</returns>
+    public static byte[] ComputeHash(this Stream stream, ChecksumAlgorithm hashType = ChecksumAlgorithm.SHA256)
+    {
+      if (stream == null) return null;
+
+      using (var algorithm = HashAlgorithm.Create(hashType.ToString()))
+        return algorithm.ComputeHash(stream);
     }
   }
 }

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using NetStorage.Standard.Models;
 using Xunit;
@@ -151,6 +152,24 @@ namespace NetStorage.Standard.Test
         new FooHandler()))
       {
         var response = await client.SymLinkAsync("/symlink", "target");
+        Assert.True(response);
+      }
+    }
+
+    [Fact]
+    public async Task UploadFile()
+    {
+      var tmpFile = Path.GetTempPath() + Guid.NewGuid() + ".txt";
+      using (var sw = new StreamWriter(tmpFile))
+      {
+        sw.WriteLine("Upload file unit test");
+        sw.Flush();
+      }
+
+      using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
+        new FooHandler()))
+      {
+        var response = await client.UploadAsync("/upload", new FileInfo(tmpFile));
         Assert.True(response);
       }
     }
