@@ -48,6 +48,8 @@ namespace NetStorage.Standard.Test
           return "";
         case "stat":
           return await GetStatContent();
+        case "symlink":
+          return "";
         default:
           return null;
       }

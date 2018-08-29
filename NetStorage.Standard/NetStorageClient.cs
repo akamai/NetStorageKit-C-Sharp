@@ -265,5 +265,19 @@ namespace NetStorage.Standard
 
       return null;
     }
+
+    public async Task<bool> SymLinkAsync(string path, string target)
+    {
+      Uri = await GetNetStorageUri(path);
+      Params = NetStorageAction.SymLink(target);
+
+      var response = await Policy
+        .Handle<HttpRequestException>()
+        .OrResult<HttpResponseMessage>(r => r.IsSuccessStatusCode == false)
+        .WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(5))
+        .ExecuteAsync(() => SendAsync(new HttpRequestMessage(HttpMethod.Post, Uri), CancellationToken.None));
+
+      return response.IsSuccessStatusCode;
+    }
   }
 }
