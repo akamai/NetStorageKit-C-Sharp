@@ -52,6 +52,11 @@ namespace NetStorage.Standard
       Credentials = credentials;
     }
 
+    /// <summary>
+    /// Constructs the full Net Storage URI with the host name as the prefix to the path
+    /// </summary>
+    /// <param name="path">/[CP Code]/[Path]</param>
+    /// <returns>Complete Net Storage URI</returns>
     public async Task<Uri> GetNetStorageUri(string path)
     {
       return await Task.FromResult(
@@ -59,18 +64,35 @@ namespace NetStorage.Standard
           .Uri);
     }
 
+    /// <summary>
+    /// Creates the Action header for the request
+    /// NB! NetStorageClient Params value has to be set first!
+    /// </summary>
+    /// <returns>Action header</returns>
     public async Task<string> CreateActionHeader()
     {
+      if (Params == null) throw new NullReferenceException($"{nameof(Params)} has to be set before calling this method!");
+
       return await Task.FromResult(Params.ConvertToQueryString(Signer.ParamsNameFormatter,
         Signer.ParamsValueFormatter));
     }
 
+    /// <summary>
+    /// Creates the Auth-Data header for the request
+    /// </summary>
+    /// <returns>Auth-Data header</returns>
     public async Task<string> CreateAuthDataHeader()
     {
       return await Task.FromResult(
         $"{SignVersion.VersionID}, 0.0.0.0, 0.0.0.0, {DateTime.UtcNow.GetEpochSeconds()}, {new Random().Next()}, {Credentials.Username}");
     }
 
+    /// <summary>
+    /// Uses the previously generated Action and Auth-Data headers to create the Auth-Sign header for the request
+    /// </summary>
+    /// <param name="action">Action header</param>
+    /// <param name="authData">Auth-Data header</param>
+    /// <returns>Auth-Sign header</returns>
     public async Task<string> CreateAuthSignHeader(string action, string authData)
     {
       var signData = $"{authData}{Uri.AbsolutePath}\n{ActionHeader.ToLower()}:{action}\n".ToByteArray();
@@ -78,6 +100,13 @@ namespace NetStorage.Standard
       return await Task.FromResult(signData.ComputeKeyedHash(Credentials.Key, SignVersion.Algorithm).ToBase64());
     }
 
+    /// <inheritdoc />
+    /// <summary>
+    /// Generates new Akamai headers and executes the HTTP request
+    /// </summary>
+    /// <param name="request">Request to be executed</param>
+    /// <param name="cancellationToken">Token for cancelling the request</param>
+    /// <returns>HTTP response message</returns>
     public override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
       CancellationToken cancellationToken)
     {
@@ -90,6 +119,10 @@ namespace NetStorage.Standard
       return await base.SendAsync(request, cancellationToken);
     }
 
+    /// <summary>
+    /// Computes the required headers for the request
+    /// </summary>
+    /// <returns>Dictionary containing the headers</returns>
     public async Task<Dictionary<string, string>> ComputeHeadersAsync()
     {
       var action = await CreateActionHeader();
@@ -104,6 +137,13 @@ namespace NetStorage.Standard
       });
     }
 
+
+    /// <summary>
+    /// Executes the request by using Polly to retry failed requests
+    /// </summary>
+    /// <param name="path">/[CP Code]/[Path]</param>
+    /// <param name="method">HTTP method</param>
+    /// <returns>HTTP response message</returns>
     public async Task<HttpResponseMessage> ExecuteWithPollyAsync(string path, HttpMethod method)
     {
       Uri = await GetNetStorageUri(path);
@@ -115,78 +155,156 @@ namespace NetStorage.Standard
         .ExecuteAsync(() => SendAsync(new HttpRequestMessage(method, Uri), CancellationToken.None));
     }
 
+    /// <summary>
+    /// You can "delete" an object from an ObjectStore (NS4) storage group
+    /// </summary>
+    /// <param name="path">/[CP code]/[path]/[file.ext]</param>
+    /// <returns>HTTP response message</returns>
     public new async Task<HttpResponseMessage> DeleteAsync(string path)
     {
       Params = NetStorageAction.Delete;
       return await ExecuteWithPollyAsync(path, HttpMethod.Put);
     }
 
+    /// <summary>
+    /// Use the "dir" action with an NS4 storage group to list the objects directly within the specified directory (similar to a standard "ls" or "dir" command)
+    /// </summary>
+    /// <param name="path">/[CP Code]/[Path]</param>
+    /// <returns>HTTP response message</returns>
     public async Task<HttpResponseMessage> DirAsync(string path)
     {
       Params = NetStorageAction.Dir();
       return await ExecuteWithPollyAsync(path, HttpMethod.Get);
     }
 
+    /// <summary>
+    /// Use the "download" action to download the specified file from an ObjectStore (NS4) storage group
+    /// </summary>
+    /// <param name="path">/[CP code]/[path]/[file.ext]</param>
+    /// <returns>HTTP response message</returns>
     public async Task<HttpResponseMessage> DownloadAsync(string path)
     {
       Params = NetStorageAction.Download;
       return await ExecuteWithPollyAsync(path, HttpMethod.Get);
     }
 
+    /// <summary>
+    /// You can use the "du" action to return disk usage information for a specified directory in an ObjectStore (NS4) storage group
+    /// </summary>
+    /// <param name="path">/[CP Code]/[Path]</param>
+    /// <returns>HTTP response message</returns>
     public async Task<HttpResponseMessage> DUAsync(string path)
     {
       Params = NetStorageAction.DU();
       return await ExecuteWithPollyAsync(path, HttpMethod.Get);
     }
 
+    /// <summary>
+    /// You can use the "list" action to recursively list all of the objects within the specified directory.
+    /// (This includes all content in all subdirectories that may exist in the named directory's "tree.")
+    /// </summary>
+    /// <param name="path">/[CP Code]/[Path]</param>
+    /// <returns>HTTP response message</returns>
     public async Task<HttpResponseMessage> ListAsync(string path)
     {
       Params = NetStorageAction.List();
       return await ExecuteWithPollyAsync(path, HttpMethod.Get);
     }
 
+    /// <summary>
+    /// You can use the "mkdir" action to create a new explicit directory in an ObjectStore (NS4) storage group
+    /// </summary>
+    /// <param name="path">/[CP Code]/[path]/[new_directory]</param>
+    /// <returns>HTTP response message</returns>
     public async Task<HttpResponseMessage> MkDirAsync(string path)
     {
       Params = NetStorageAction.MkDir;
       return await ExecuteWithPollyAsync(path, HttpMethod.Put);
     }
 
+    /// <summary>
+    /// Incorporate the "mtime" action to change a files modification time ("touch") in an ObjectStore (NS4) storage group
+    /// </summary>
+    /// <param name="path">/[CP code]/[path]/[file.ext]</param>
+    /// <param name="newTime">Set the variable as the desired modification time for the target content (using UNIX epoch time)</param>
+    /// <returns>HTTP response message</returns>
     public async Task<HttpResponseMessage> MTimeAsync(string path, DateTime? newTime = null)
     {
       Params = NetStorageAction.MTime(newTime);
       return await ExecuteWithPollyAsync(path, HttpMethod.Post);
     }
 
+    /// <summary>
+    /// You can use the "quick-delete" with ObjectStore (NS4) to perform a delete of a selected directory, including all contents
+    /// </summary>
+    /// <param name="path">/[CP Code]/[path]/[directory]</param>
+    /// <returns>HTTP response message</returns>
     public async Task<HttpResponseMessage> QuickDeleteAsync(string path)
     {
       Params = NetStorageAction.QuickDelete;
       return await ExecuteWithPollyAsync(path, HttpMethod.Post);
     }
 
+    /// <summary>
+    /// You can use the "rename" action with ObjectStore (NS4) to target a specific file or symbolic link in order to rename it
+    /// </summary>
+    /// <param name="path">/[CP Code]/[path]/[file.ext]</param>
+    /// <param name="destination">Include the [CP Code] root, followed by the [path] destination where the renamed file is to reside.
+    /// Finally, include the new name [file.ext] for the object and include the extension, if applicable.
+    /// Ensure that special characters are query string encoded as required.
+    /// For example, any forward slashes ("/") would need to be represented as %2F, in support of query string encoding.</param>
+    /// <returns>HTTP response message</returns>
     public async Task<HttpResponseMessage> RenameAsync(string path, string destination)
     {
       Params = NetStorageAction.Rename(destination);
       return await ExecuteWithPollyAsync(path, HttpMethod.Post);
     }
 
+    /// <summary>
+    /// You can delete an empty directory in ObjectStore (NS4) with the "rmdir" action
+    /// </summary>
+    /// <param name="path">/[CP Code]/[path]/[target directory]</param>
+    /// <returns>HTTP response message</returns>
     public async Task<HttpResponseMessage> RmDirAsync(string path)
     {
       Params = NetStorageAction.RmDir;
       return await ExecuteWithPollyAsync(path, HttpMethod.Post);
     }
 
+    /// <summary>
+    /// You can return stat structure (information) for a named file, symlink or directory with the "stat" action in ObjectStore (NS4)
+    /// </summary>
+    /// <param name="path">/[CP Code]/[path]/[target object]</param>
+    /// <returns>HTTP response message</returns>
     public async Task<HttpResponseMessage> StatAsync(string path)
     {
       Params = NetStorageAction.Stat();
       return await ExecuteWithPollyAsync(path, HttpMethod.Get);
     }
 
+    /// <summary>
+    /// You can create a symbolic link in ObjectStore (NS4) with the "symlink" action
+    /// </summary>
+    /// <param name="path">/[CP Code]/[path]</param>
+    /// <param name="target">Used to define the target of the symlink.
+    /// Include the complete [path] to, as well as the name ( [link]) for this file (including the extension, if applicable).
+    /// Ensure that special characters (“ /”) are query string encoded. For example, any forward slashes ("/") would need to be represented as %2F, in support of query string encoding.</param>
+    /// <returns>HTTP response message</returns>
     public async Task<HttpResponseMessage> SymLinkAsync(string path, string target)
     {
       Params = NetStorageAction.SymLink(target);
       return await ExecuteWithPollyAsync(path, HttpMethod.Post);
     }
 
+    /// <summary>
+    /// You can upload files to an ObjectStore (NS4) storage group with the "upload" action
+    /// </summary>
+    /// <param name="path">/[CP Code]/[path]/[file.ext]</param>
+    /// <param name="srcFile">File to be uploaded</param>
+    /// <param name="indexZip">Include this to enable az2z processing to index uploaded “.zip” archive files for the “Serve from Zip” feature.
+    /// (Archive files must be indexed before they can be used with Serve from Zip.)
+    /// The "2" serves as the version currently supported with ObjectStore (NS4) storage groups.</param>
+    /// <returns>HTTP response message</returns>
     public async Task<HttpResponseMessage> UploadAsync(string path, FileInfo srcFile, bool? indexZip = null)
     {
       if (!srcFile.Exists) throw new FileNotFoundException("Src file is not accessible", srcFile.ToString());
@@ -204,7 +322,11 @@ namespace NetStorage.Standard
       return await UploadAsync(path, stream, mTime, size, sha256Checksum: checksum, indexZip: indexZip);
     }
 
-    public async Task<HttpResponseMessage> UploadAsync(string path, Stream uploadFileStream, DateTime? mTime = null,
+    /// <summary>
+    /// Constructs the upload request and executes it with Polly
+    /// </summary>
+    /// <returns>HTTP response message</returns>
+    private async Task<HttpResponseMessage> UploadAsync(string path, Stream uploadFileStream, DateTime? mTime = null,
       long? size = null,
       byte[] md5Checksum = null, byte[] sha1Checksum = null, byte[] sha256Checksum = null, bool? indexZip = null)
     {
