@@ -1,4 +1,22 @@
-﻿using System;
+﻿// Copyright 2018 Derivco Estonia
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// Author: meelis.talvis@derivco.ee  (Meelis Talvis)
+// Contributor: colinb@akamai.com  (Colin Bendell)
+//
+
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using NetStorage.Standard.Models;
@@ -14,9 +32,9 @@ namespace NetStorage.Standard.Test
       using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
         new FooHandler()))
       {
-        client.Uri = await client.GetNetStorageUri("/foobar");
+        client.Uri = await client.GetNetStorageUri("/foobar").ConfigureAwait(false);
         client.Params = NetStorageAction.Dir();
-        var headers = await client.ComputeHeadersAsync();
+        var headers = await client.ComputeHeadersAsync().ConfigureAwait(false);
         Assert.Equal(3, headers.Count);
         Assert.NotNull(headers["X-Akamai-ACS-Action"]);
         Assert.NotNull(headers["X-Akamai-ACS-Auth-Data"]);
@@ -30,7 +48,7 @@ namespace NetStorage.Standard.Test
       using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
         new FooHandler()))
       {
-        var response = await client.DirAsync("/dir");
+        var response = await client.DirAsync("/dir").ConfigureAwait(false);
         Assert.NotNull(response);
       }
     }
@@ -41,7 +59,7 @@ namespace NetStorage.Standard.Test
       using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
         new FooHandler()))
       {
-        var response = await client.DeleteAsync("/delete");
+        var response = await client.DeleteAsync("/delete").ConfigureAwait(false);
         Assert.NotNull(response);
       }
     }
@@ -52,7 +70,7 @@ namespace NetStorage.Standard.Test
       using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
         new FooHandler()))
       {
-        var response = await client.DownloadAsync("/download");
+        var response = await client.DownloadAsync("/download").ConfigureAwait(false);
         Assert.NotNull(response);
       }
     }
@@ -63,7 +81,7 @@ namespace NetStorage.Standard.Test
       using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
         new FooHandler()))
       {
-        var response = await client.DUAsync("/du");
+        var response = await client.DUAsync("/du").ConfigureAwait(false);
         Assert.NotNull(response);
       }
     }
@@ -74,7 +92,7 @@ namespace NetStorage.Standard.Test
       using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
         new FooHandler()))
       {
-        var response = await client.ListAsync("/list");
+        var response = await client.ListAsync("/list").ConfigureAwait(false);
         Assert.NotNull(response);
       }
     }
@@ -85,7 +103,7 @@ namespace NetStorage.Standard.Test
       using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
         new FooHandler()))
       {
-        var response = await client.MkDirAsync("/mkdir");
+        var response = await client.MkDirAsync("/mkdir").ConfigureAwait(false);
         Assert.NotNull(response);
       }
     }
@@ -96,7 +114,7 @@ namespace NetStorage.Standard.Test
       using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
         new FooHandler()))
       {
-        var response = await client.MTimeAsync("/mtime");
+        var response = await client.MTimeAsync("/mtime").ConfigureAwait(false);
         Assert.NotNull(response);
       }
     }
@@ -107,7 +125,7 @@ namespace NetStorage.Standard.Test
       using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
         new FooHandler()))
       {
-        var response = await client.QuickDeleteAsync("/quick-delete");
+        var response = await client.QuickDeleteAsync("/quick-delete").ConfigureAwait(false);
         Assert.NotNull(response);
       }
     }
@@ -118,7 +136,7 @@ namespace NetStorage.Standard.Test
       using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
         new FooHandler()))
       {
-        var response = await client.RenameAsync("/rename", "");
+        var response = await client.RenameAsync("/rename", "").ConfigureAwait(false);
         Assert.NotNull(response);
       }
     }
@@ -129,7 +147,7 @@ namespace NetStorage.Standard.Test
       using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
         new FooHandler()))
       {
-        var response = await client.RmDirAsync("/rmdir");
+        var response = await client.RmDirAsync("/rmdir").ConfigureAwait(false);
         Assert.NotNull(response);
       }
     }
@@ -140,7 +158,7 @@ namespace NetStorage.Standard.Test
       using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
         new FooHandler()))
       {
-        var response = await client.StatAsync("/stat");
+        var response = await client.StatAsync("/stat").ConfigureAwait(false);
         Assert.NotNull(response);
       }
     }
@@ -151,7 +169,7 @@ namespace NetStorage.Standard.Test
       using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
         new FooHandler()))
       {
-        var response = await client.SymLinkAsync("/symlink", "target");
+        var response = await client.SymLinkAsync("/symlink", "/cpcode/path/to/existing/object").ConfigureAwait(false);
         Assert.NotNull(response);
       }
     }
@@ -169,7 +187,7 @@ namespace NetStorage.Standard.Test
       using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
         new FooHandler()))
       {
-        var response = await client.UploadAsync("/upload", new FileInfo(tmpFile));
+        var response = await client.UploadAsync("/upload", new FileInfo(tmpFile)).ConfigureAwait(false);
         Assert.NotNull(response);
       }
     }

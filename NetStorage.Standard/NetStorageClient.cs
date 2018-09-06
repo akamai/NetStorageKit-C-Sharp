@@ -284,6 +284,7 @@ namespace NetStorage.Standard
 
     /// <summary>
     /// You can create a symbolic link in ObjectStore (NS4) with the "symlink" action
+    /// Path is the symlink to be created and Target is the existing object in Net Storage
     /// </summary>
     /// <param name="path">/[CP Code]/[path]</param>
     /// <param name="target">Used to define the target of the symlink.

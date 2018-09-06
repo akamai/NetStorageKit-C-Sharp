@@ -1,4 +1,22 @@
-﻿// ReSharper disable InconsistentNaming
+﻿// Copyright 2018 Derivco Estonia
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// Author: meelis.talvis@derivco.ee  (Meelis Talvis)
+// Contributor: colinb@akamai.com  (Colin Bendell)
+//
+
+// ReSharper disable InconsistentNaming
 
 using System;
 using System.Net;
@@ -13,12 +31,12 @@ namespace NetStorage.Standard.Test
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
       CancellationToken cancellationToken)
     {
-      var content = await GetContent(request);
+      var content = await GetContent(request).ConfigureAwait(false);
       return await Task.FromResult(new HttpResponseMessage
       {
         StatusCode = HttpStatusCode.OK,
         Content = new ReadOnlyMemoryContent(new ReadOnlyMemory<byte>(content.ToByteArray()))
-      });
+      }).ConfigureAwait(false);
     }
 
     private static async Task<string> GetContent(HttpRequestMessage request)
@@ -27,15 +45,15 @@ namespace NetStorage.Standard.Test
       switch (action)
       {
         case "dir":
-          return await GetDirContent();
+          return await GetDirContent().ConfigureAwait(false);
         case "delete":
           return "";
         case "download":
           return "";
         case "du":
-          return await GetDUContent();
+          return await GetDUContent().ConfigureAwait(false);
         case "list":
-          return await GetListContent();
+          return await GetListContent().ConfigureAwait(false);
         case "mkdir":
           return "";
         case "mtime":
@@ -47,7 +65,7 @@ namespace NetStorage.Standard.Test
         case "rmdir":
           return "";
         case "stat":
-          return await GetStatContent();
+          return await GetStatContent().ConfigureAwait(false);
         case "symlink":
           return "";
         case "upload":
@@ -70,7 +88,7 @@ namespace NetStorage.Standard.Test
             <file type=""file"" name=""file1"" size=""532459"" md5=""[HASH]"" mtime=""1524068382""/>
         </stat>";
 
-      return await Task.FromResult(content);
+      return await Task.FromResult(content).ConfigureAwait(false);
     }
 
     private static async Task<string> GetDUContent()
@@ -100,7 +118,7 @@ namespace NetStorage.Standard.Test
             <file type=""symlink"" name=""[CP Code]/explicitdir2/link1""/>
         </list>";
 
-      return await Task.FromResult(content);
+      return await Task.FromResult(content).ConfigureAwait(false);
     }
 
     private static async Task<string> GetStatContent()
@@ -109,7 +127,7 @@ namespace NetStorage.Standard.Test
         <stat directory=""/dir1/dir2""> 
             <file type=""file"" name=""file.html"" mtime=""1260000000"" size=""1234567"" md5=""0123456789abcdef0123456789abcdef"" /> 
         </stat>";
-      return await Task.FromResult(content);
+      return await Task.FromResult(content).ConfigureAwait(false);
     }
   }
 }
