@@ -36,7 +36,7 @@ namespace NetStorage.Standard.Test
       {
         StatusCode = HttpStatusCode.OK,
         Content = new ReadOnlyMemoryContent(new ReadOnlyMemory<byte>(content.ToByteArray()))
-      }).ConfigureAwait(false);
+      });
     }
 
     private static async Task<string> GetContent(HttpRequestMessage request)
@@ -88,7 +88,7 @@ namespace NetStorage.Standard.Test
             <file type=""file"" name=""file1"" size=""532459"" md5=""[HASH]"" mtime=""1524068382""/>
         </stat>";
 
-      return await Task.FromResult(content).ConfigureAwait(false);
+      return await Task.FromResult(content);
     }
 
     private static async Task<string> GetDUContent()
@@ -118,7 +118,7 @@ namespace NetStorage.Standard.Test
             <file type=""symlink"" name=""[CP Code]/explicitdir2/link1""/>
         </list>";
 
-      return await Task.FromResult(content).ConfigureAwait(false);
+      return await Task.FromResult(content);
     }
 
     private static async Task<string> GetStatContent()
@@ -127,7 +127,7 @@ namespace NetStorage.Standard.Test
         <stat directory=""/dir1/dir2""> 
             <file type=""file"" name=""file.html"" mtime=""1260000000"" size=""1234567"" md5=""0123456789abcdef0123456789abcdef"" /> 
         </stat>";
-      return await Task.FromResult(content).ConfigureAwait(false);
+      return await Task.FromResult(content);
     }
   }
 }
