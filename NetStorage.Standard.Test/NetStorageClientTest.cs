@@ -27,7 +27,7 @@ namespace NetStorage.Standard.Test
   public class NetStorageClientTest
   {
     [Fact]
-    public async Task CheckComputedHeaders()
+    public async Task ClientHeaders_Not_Null_After_ComputeHeadersAsync_Test()
     {
       using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
         new FooHandler()))
@@ -43,7 +43,7 @@ namespace NetStorage.Standard.Test
     }
 
     [Fact]
-    public async Task GetDirDocument()
+    public async Task HttpResponseMessage_Not_Null_After_DirAsync_Test()
     {
       using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
         new FooHandler()))
@@ -54,7 +54,7 @@ namespace NetStorage.Standard.Test
     }
 
     [Fact]
-    public async Task DeleteFile()
+    public async Task HttpResponseMessage_Not_Null_After_DeleteAsync_Test()
     {
       using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
         new FooHandler()))
@@ -65,7 +65,7 @@ namespace NetStorage.Standard.Test
     }
 
     [Fact]
-    public async Task DownloadFile()
+    public async Task HttpResponseMessage_Not_Null_After_DownloadAsync_Test()
     {
       using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
         new FooHandler()))
@@ -76,7 +76,7 @@ namespace NetStorage.Standard.Test
     }
 
     [Fact]
-    public async Task GetDirectoryUsage()
+    public async Task HttpResponseMessage_Not_Null_After_DUAsync_Test()
     {
       using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
         new FooHandler()))
@@ -87,7 +87,7 @@ namespace NetStorage.Standard.Test
     }
 
     [Fact]
-    public async Task GetList()
+    public async Task HttpResponseMessage_Not_Null_After_ListAsync_Test()
     {
       using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
         new FooHandler()))
@@ -98,7 +98,7 @@ namespace NetStorage.Standard.Test
     }
 
     [Fact]
-    public async Task MakeDirectory()
+    public async Task HttpResponseMessage_Not_Null_After_MkDirAsync_Test()
     {
       using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
         new FooHandler()))
@@ -109,7 +109,7 @@ namespace NetStorage.Standard.Test
     }
 
     [Fact]
-    public async Task ModifyTime()
+    public async Task HttpResponseMessage_Not_Null_After_MTimeAsync_Test()
     {
       using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
         new FooHandler()))
@@ -120,7 +120,7 @@ namespace NetStorage.Standard.Test
     }
 
     [Fact]
-    public async Task QuickDelete()
+    public async Task HttpResponseMessage_Not_Null_After_QuickDeleteAsync_Test()
     {
       using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
         new FooHandler()))
@@ -131,7 +131,7 @@ namespace NetStorage.Standard.Test
     }
 
     [Fact]
-    public async Task RenameFile()
+    public async Task HttpResponseMessage_Not_Null_After_RenameAsync_Test()
     {
       using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
         new FooHandler()))
@@ -142,7 +142,7 @@ namespace NetStorage.Standard.Test
     }
 
     [Fact]
-    public async Task RemoveDirectory()
+    public async Task HttpResponseMessage_Not_Null_After_RmDirAsync_Test()
     {
       using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
         new FooHandler()))
@@ -153,7 +153,7 @@ namespace NetStorage.Standard.Test
     }
 
     [Fact]
-    public async Task GetItemStat()
+    public async Task HttpResponseMessage_Not_Null_After_StatAsync_Test()
     {
       using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
         new FooHandler()))
@@ -164,7 +164,7 @@ namespace NetStorage.Standard.Test
     }
 
     [Fact]
-    public async Task CreateSymLink()
+    public async Task HttpResponseMessage_Not_Null_After_SymLinkAsync_Test()
     {
       using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
         new FooHandler()))
@@ -175,7 +175,7 @@ namespace NetStorage.Standard.Test
     }
 
     [Fact]
-    public async Task UploadFile()
+    public async Task HttpResponseMessage_Not_Null_After_UploadAsync_Test()
     {
       var tmpFile = Path.GetTempPath() + Guid.NewGuid() + ".txt";
       using (var sw = new StreamWriter(tmpFile))
