@@ -313,9 +313,14 @@ namespace NetStorage.Standard
 
       HttpResponseMessage response;
       var mTime = srcFile.LastWriteTime;
+      byte[] checksum;
       using (var stream = new BufferedStream(srcFile.OpenRead(), 1024 * 1024))
       {
-        var checksum = stream.ComputeHash(HashType.SHA256.Checksum);
+        checksum = stream.ComputeHash(HashType.SHA256.Checksum);
+      }
+
+      using (var stream = new BufferedStream(srcFile.OpenRead(), 1024 * 1024))
+      {
         var size = srcFile.Length;
 
         Uri = await GetNetStorageUri(path);

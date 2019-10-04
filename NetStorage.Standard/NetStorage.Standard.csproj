@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -9,7 +9,7 @@
     <Description>.NET Standard version of the NetStorageKit</Description>
     <RepositoryUrl>https://github.com/meelist/NetStorageKit-C-Sharp/tree/netstandard</RepositoryUrl>
     <PackageTags>Akamai NetStorage NetStorageKit Net Storage</PackageTags>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
