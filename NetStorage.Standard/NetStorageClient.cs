@@ -312,19 +312,13 @@ namespace NetStorage.Standard
       if (!srcFile.Exists) throw new FileNotFoundException("Src file is not accessible", srcFile.ToString());
 
       HttpResponseMessage response;
-      var mTime = srcFile.LastWriteTime;
-      byte[] checksum;
       using (var stream = new BufferedStream(srcFile.OpenRead(), 1024 * 1024))
       {
-        checksum = stream.ComputeHash(HashType.SHA256.Checksum);
-      }
-
-      using (var stream = new BufferedStream(srcFile.OpenRead(), 1024 * 1024))
-      {
-        var size = srcFile.Length;
+        var checksum = stream.ComputeHash(HashType.SHA256.Checksum);
+        stream.Position = 0;
 
         Uri = await GetNetStorageUri(path);
-        Params = NetStorageAction.Upload(mTime, size, null, null, checksum, indexZip);
+        Params = NetStorageAction.Upload(srcFile.LastWriteTime, srcFile.Length, null, null, checksum, indexZip);
 
         // sanity check to ensure that indexZip is only true if the file destination is also a zip.
         // probably should throw an exception or warning instead.
@@ -346,6 +340,34 @@ namespace NetStorage.Standard
       }
 
       return response;
+    }
+
+    /// <summary>
+    /// You can upload files to an ObjectStore (NS4) storage group with the "upload" action
+    /// </summary>
+    /// <param name="path">/[CP Code]/[path]/[file.ext]</param>
+    /// <param name="checksum">Computed hash in SHA256 for the source file</param>
+    /// <param name="srcFile">Source file as a stream</param>
+    /// <param name="lastWriteTime">Last write time of the file</param>
+    /// <returns>HTTP response message</returns>
+    public async Task<HttpResponseMessage> UploadAsync(string path, byte[] checksum, Stream srcFile,
+      DateTime? lastWriteTime = null)
+    {
+      Uri = await GetNetStorageUri(path);
+      Params = NetStorageAction.Upload(lastWriteTime, srcFile.Length, null, null, checksum);
+
+      if (srcFile.Position != 0)
+      {
+        srcFile.Position = 0;
+      }
+
+      return await Policy
+        .Handle<HttpRequestException>()
+        .OrResult<HttpResponseMessage>(r => r.IsSuccessStatusCode == false)
+        .WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(5))
+        .ExecuteAsync(() =>
+          SendAsync(new HttpRequestMessage(HttpMethod.Put, Uri) {Content = new StreamContent(srcFile)},
+            CancellationToken.None));
     }
   }
 }

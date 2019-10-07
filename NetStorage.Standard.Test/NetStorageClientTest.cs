@@ -191,5 +191,31 @@ namespace NetStorage.Standard.Test
         Assert.NotNull(response);
       }
     }
+
+    [Fact]
+    public async Task HttpResponseMessage_Not_Null_After_UploadAsync_Stream_Overload_Test()
+    {
+      var tmpFile = Path.GetTempPath() + Guid.NewGuid() + ".txt";
+      using (var sw = new StreamWriter(tmpFile))
+      {
+        sw.WriteLine("Upload file unit test");
+        sw.Flush();
+      }
+
+      var srcFile = new FileInfo(tmpFile);
+      using (var stream = new BufferedStream(srcFile.OpenRead(), 1024 * 1024))
+      {
+        var checksum = stream.ComputeHash(HashType.SHA256.Checksum);
+        stream.Position = 0;
+
+        using (var client = new NetStorageClient(new NetStorageCredentials("www.example.com", "user1", "secret1"),
+          new FooHandler()))
+        {
+          var response = await client.UploadAsync("/upload", checksum, stream, srcFile.LastWriteTime)
+            .ConfigureAwait(false);
+          Assert.NotNull(response);
+        }
+      }
+    }
   }
 }
