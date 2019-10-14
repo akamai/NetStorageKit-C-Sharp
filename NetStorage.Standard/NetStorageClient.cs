@@ -52,6 +52,12 @@ namespace NetStorage.Standard
       Credentials = credentials;
     }
 
+    public NetStorageClient(NetStorageCredentials credentials, HttpMessageHandler handler, bool disposeHandler) : base(handler, disposeHandler)
+    {
+      SignVersion = SignType.HMACSHA256;
+      Credentials = credentials;
+    }
+
     /// <summary>
     /// Constructs the full Net Storage URI with the host name as the prefix to the path
     /// </summary>
