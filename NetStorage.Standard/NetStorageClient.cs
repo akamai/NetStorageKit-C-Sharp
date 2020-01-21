@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -157,7 +158,7 @@ namespace NetStorage.Standard
 
       return await Policy
         .Handle<HttpRequestException>()
-        .OrResult<HttpResponseMessage>(r => r.IsSuccessStatusCode == false)
+        .OrResult<HttpResponseMessage>(r => r.IsSuccessStatusCode == false && r.StatusCode != HttpStatusCode.NotFound)
         .WaitAndRetryAsync(5, _ => TimeSpan.FromSeconds(2))
         .ExecuteAsync(() => SendAsync(new HttpRequestMessage(method, Uri), CancellationToken.None));
     }
