@@ -3,6 +3,11 @@
 This library assists in the interaction with Akamai's NetStorage CMS API. The CMS API Spec can be found at:
 https://control.akamai.com/dl/customers/NS/NS_http_api_OS.pdf
 
+Important
+------------
+
+Akamai does not maintain or regulate this package. While it can be incorporated to assist you in API use, Akamai Technical Support will not offer assistance and Akamai cannot be held liable if issues arise from its use. 
+
 ## Project organization
 * `/NetStorage` - core NetStorage project
 * `/NetStorageTest` - MSTest unit tests
